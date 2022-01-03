@@ -19,6 +19,7 @@ import XMonad
 import XMonad.Config.Desktop
 import XMonad.Hooks.ManageDocks
 import XMonad.Layout.Spacing
+import XMonad.Layout.Fullscreen
 import XMonad.Util.Run
 import XMonad.Util.SpawnOnce
 import Data.Monoid
@@ -158,7 +159,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
 
     -- Restart xmonad
-    , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart")
+    , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart; killall xmobar; xmobar &")
     ]
     ++
 
@@ -309,7 +310,7 @@ myStartupHook = do
 main = do 
     xmproc <- spawnPipe "xmobar -x 0 /home/ryanh/.config/xmobar/.xmobarrc"
     xmproc <- spawnPipe "xmobar -x 1 /home/ryanh/.config/xmobar/.xmobarrc"
-    xmonad $ docks defaults
+    xmonad $ docks $ fullscreenSupport $ defaults
 
 -- A structure containing your configuration settings, overriding
 -- fields in the default config. Any you don't override, will
@@ -334,8 +335,7 @@ defaults = def {
         mouseBindings      = myMouseBindings,
 
       -- hooks, layouts
-        layoutHook         = spacingRaw False (Border 2 2 2 2) True (Border 8 8 8 8) True 
-                             $ myLayout,
+        layoutHook         = spacingRaw False (Border 0 0 0 0) True (Border 8 8 8 8) True $ fullscreenFull $ myLayout,
         manageHook         = myManageHook,
         handleEventHook    = myEventHook,
         logHook            = myLogHook,
